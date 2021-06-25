@@ -68,24 +68,26 @@ void MainWindow::LoadTimeLine(std::string & dir_path){
 
     q_timer->start(1);
     q_elaspedtime.start();
+    initial_time = (long double)(q_elaspedtime.elapsed()) * 0.001f;
+
     start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+    std::cout<<start_time<<std::endl;
     curr_time = min_time + start_time;
     loaded = true;
 }
 
 void MainWindow::UpdateTime(){
 
-
     int msecs = q_elaspedtime.elapsed();
-    curr_time = min_time + (long double)(msecs) * 0.001f;
+    curr_time = min_time + (long double)(msecs) * 0.001f - initial_time + start_time;
     if(curr_time > max_time) {
         q_timer->stop();
     }
-    int percent = int(((long double)(msecs)*0.001f)/(max_time - min_time)*100.0f);
+    int percent = int((curr_time - min_time)/(max_time - min_time)*100.0f);
     ui->timeLineSlider->setSliderPosition(percent);
 
     char time_char[30];
-    sprintf(time_char, "%0.9Lf", curr_time);
+    // sprintf(time_char, "%0.9Lf", curr_time);
     ui->timelabel->setText(QString::fromStdString(std::string(time_char)));
 
     int last_data_idx = FindLastIdx(curr_time);
@@ -152,8 +154,12 @@ void MainWindow::TimeLineSliderPressed(){
     q_timer->stop();
 }
 void MainWindow::TimeLineSliderReleased(){
-    q_elaspedtime.restart();
-    start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+    // q_elaspedtime.restart();
+    if(loaded) {
+        initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
+        start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+        q_timer->start();
+    }
 
-    q_timer->start();
+    std::cout<<ui->timeLineSlider->sliderPosition()<<std::endl;
 }

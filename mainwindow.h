@@ -54,6 +54,8 @@ private:
     long double min_time;
     long double max_time;
 
+    long double initial_time;
+
     long double start_time;
 
     std::vector<long double> times;
