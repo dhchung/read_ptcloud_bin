@@ -12,6 +12,7 @@
 #include <iostream> 
 #include <fstream>
 #include <filesystem>
+#include <dirent.h>
 #include <numeric>
 #include <algorithm>
 

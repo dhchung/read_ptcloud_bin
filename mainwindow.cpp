@@ -53,20 +53,46 @@ std::vector<int> MainWindow::sort_indices(const std::vector<long double> &v) {
 void MainWindow::LoadTimeLine(std::string & dir_path){
     times.clear();
     file_dir.clear();
-    for(const auto & entry : std::filesystem::directory_iterator(dir_path)){
-        std::string filename = entry.path();
-        // size_t binloc = filename.find(dir);
-        size_t slash_loc = filename.find_last_of("/");
-        size_t bin_loc = filename.find(".bin");
-        size_t length = bin_loc - slash_loc -1;
-        times.push_back(std::stold(filename.substr(slash_loc+1, length)));
-        file_dir.push_back(filename);
-    }
+    // for(const auto & entry : std::filesystem::directory_iterator(dir_path)){
+    //     std::string filename = entry.path();
+    //     // size_t binloc = filename.find(dir);
+    //     size_t slash_loc = filename.find_last_of("/");
+    //     size_t bin_loc = filename.find(".bin");
+    //     size_t length = bin_loc - slash_loc -1;
+    //     times.push_back(std::stold(filename.substr(slash_loc+1, length)));
+    //     file_dir.push_back(filename);
+    // }
 
+    DIR *dir = opendir(dir_path.c_str());
+    struct dirent *ent;
+    std::cout<<dir_path<<std::endl;
+    // if ((dir = opendir(dir_path.c_str())) != NULL) {
+    if(dir!= NULL){
+        while ((ent = readdir (dir)) != NULL) {
+            std::string filename = std::string(ent->d_name);
+            if(filename=="." || filename=="..") {
+                continue;
+            }
+
+            // size_t binloc = filename.find(dir);
+            size_t slash_loc = filename.find_last_of("/");
+            size_t bin_loc = filename.find(".bin");
+            size_t length = bin_loc - slash_loc -1;
+            times.push_back(std::stold(filename.substr(slash_loc+1, length)));
+            file_dir.push_back(dir_path + "/" + filename);
+        }
+        closedir (dir);
+    } else {
+        perror ("");
+    }
 
     std::vector<int> sorted_idx = sort_indices(times);
     min_time = times[sorted_idx[0]];
     max_time = times[sorted_idx[sorted_idx.size()-1]];
+
+    // for(size_t i = 0; i<times.size(); ++i) {
+    //     printf("%0.9Lf\n", times[i]);
+    // }
 
     m_loaded = true;
 }
@@ -82,7 +108,7 @@ void MainWindow::UpdateTime(){
     ui->timeLineSlider->setSliderPosition(percent);
 
     char time_char[30];
-    // sprintf(time_char, "%0.9Lf", curr_time);
+    sprintf(time_char, "%0.9Lf", curr_time);
     ui->timelabel->setText(QString::fromStdString(std::string(time_char)));
 
     int last_data_idx = FindLastIdx(curr_time);
@@ -152,7 +178,9 @@ void MainWindow::TimeLineSliderReleased(){
     if(m_loaded) {
         initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
         start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
-        q_timer->start();
+        if(m_play){
+            q_timer->start();
+        }
     }
 
     std::cout<<ui->timeLineSlider->sliderPosition()<<std::endl;
