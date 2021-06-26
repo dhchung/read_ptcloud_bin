@@ -16,7 +16,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->timeLineSlider, SIGNAL(sliderReleased()), this, SLOT(TimeLineSliderReleased()));
     connect(ui->timeLineSlider, SIGNAL(sliderPressed()), this, SLOT(TimeLineSliderPressed()));
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(LoadButtonClicked()));
-    loaded = false;
+    connect(ui->playpushButton, SIGNAL(clicked()), this, SLOT(PlayPushButtonClicked()));
+    m_loaded = false;
+    m_play = false;
 
 }
 
@@ -66,14 +68,7 @@ void MainWindow::LoadTimeLine(std::string & dir_path){
     min_time = times[sorted_idx[0]];
     max_time = times[sorted_idx[sorted_idx.size()-1]];
 
-    q_timer->start(1);
-    q_elaspedtime.start();
-    initial_time = (long double)(q_elaspedtime.elapsed()) * 0.001f;
-
-    start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
-    std::cout<<start_time<<std::endl;
-    curr_time = min_time + start_time;
-    loaded = true;
+    m_loaded = true;
 }
 
 void MainWindow::UpdateTime(){
@@ -150,16 +145,39 @@ int MainWindow::FindLastIdx(long double time){
 
 }
 void MainWindow::TimeLineSliderPressed(){
-    std::cout<<"Pressed"<<std::endl;
     q_timer->stop();
 }
 void MainWindow::TimeLineSliderReleased(){
     // q_elaspedtime.restart();
-    if(loaded) {
+    if(m_loaded) {
         initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
         start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
         q_timer->start();
     }
 
     std::cout<<ui->timeLineSlider->sliderPosition()<<std::endl;
+}
+
+void MainWindow::PlayPushButtonClicked(){
+    if(!m_play) {
+
+        q_timer->start(1);
+        q_elaspedtime.start();
+        initial_time = (long double)(q_elaspedtime.elapsed()) * 0.001f;
+
+        start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+        curr_time = min_time + start_time;
+
+        // initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
+        // start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+        // q_timer->start();
+        m_play = true;        
+        ui->playpushButton->setText("Stop");
+
+    } else {
+        q_timer->stop();
+        m_play = false;
+        ui->playpushButton->setText("Play");
+
+    }
 }

@@ -41,6 +41,7 @@ private slots:
     void TimeLineSliderPressed();
     void TimeLineSliderReleased();
     void LoadButtonClicked();
+    void PlayPushButtonClicked();
 
     void UpdateTime();
 
@@ -61,7 +62,8 @@ private:
     std::vector<long double> times;
     std::vector<std::string> file_dir;
 
-    bool loaded;
+    bool m_loaded;
+    bool m_play;
 
     int FindLastIdx(long double time);
 };

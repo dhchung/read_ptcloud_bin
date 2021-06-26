@@ -149,6 +149,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="playpushButton">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>570</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Play</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
