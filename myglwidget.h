@@ -70,8 +70,6 @@ struct CameraPosition{
         std::cout<<"["<<a.x()<<", "<<a.y()<<", "<<a.z()<<"]"<<std::endl;
     }
 
-
-
     void mouse_scroll_update(float dscroll) {
         distance -= scroll_sensitivity * dscroll;
         if(distance < 0.1){

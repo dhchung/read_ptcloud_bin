@@ -65,7 +65,6 @@ void MainWindow::LoadTimeLine(std::string & dir_path){
 
     DIR *dir = opendir(dir_path.c_str());
     struct dirent *ent;
-    std::cout<<dir_path<<std::endl;
     // if ((dir = opendir(dir_path.c_str())) != NULL) {
     if(dir!= NULL){
         while ((ent = readdir (dir)) != NULL) {
@@ -183,7 +182,6 @@ void MainWindow::TimeLineSliderReleased(){
         }
     }
 
-    std::cout<<ui->timeLineSlider->sliderPosition()<<std::endl;
 }
 
 void MainWindow::PlayPushButtonClicked(){
