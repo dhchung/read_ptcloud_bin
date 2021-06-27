@@ -143,6 +143,7 @@ void MainWindow::UpdateTime(){
         ui->renderwindowwidget->lidar1_ptcld = pc;
     }
 
+    ui->renderwindowwidget->resizeGL(ui->renderwindowwidget->width(), ui->renderwindowwidget->height());
     ui->renderwindowwidget->paintstuff();
 
 
@@ -180,30 +181,70 @@ void MainWindow::TimeLineSliderReleased(){
         if(m_play){
             q_timer->start();
         }
+
+        curr_time = min_time + start_time;
+
+        int last_data_idx = FindLastIdx(curr_time);
+
+        if(last_data_idx!= -1) {
+            ui->lastdatalabel->setText(QString::fromStdString(file_dir[last_data_idx]));
+
+            std::vector<std::vector<float>> pc;
+            std::string curr_file = file_dir[last_data_idx];
+            std::ifstream is(curr_file, std::ios::in | std::ios::binary);
+
+            while(is){
+                float x;
+                float y;
+                float z;
+                float intensity;
+                uint32_t time;
+                uint16_t reflectivity;
+                uint16_t ambient;
+                uint32_t range;
+
+                is.read((char*)&x, sizeof(float));
+                is.read((char*)&y, sizeof(float));
+                is.read((char*)&z, sizeof(float));
+                is.read((char*)&intensity, sizeof(float));
+                is.read((char*)&time, sizeof(uint32_t));
+                is.read((char*)&reflectivity, sizeof(uint16_t));
+                is.read((char*)&ambient, sizeof(uint16_t));
+                is.read((char*)&range, sizeof(uint32_t));
+                std::vector<float> point{x, y, z};
+                pc.push_back(point);
+            }
+            ui->renderwindowwidget->lidar1_ptcld = pc;
+        }
+
+        ui->renderwindowwidget->resizeGL(ui->renderwindowwidget->width(), ui->renderwindowwidget->height());
+        ui->renderwindowwidget->paintstuff();
+
     }
 
 }
 
 void MainWindow::PlayPushButtonClicked(){
-    if(!m_play) {
+    if(m_loaded) {
+        if(!m_play) {
 
-        q_timer->start(1);
-        q_elaspedtime.start();
-        initial_time = (long double)(q_elaspedtime.elapsed()) * 0.001f;
+            q_timer->start(1);
+            q_elaspedtime.start();
+            initial_time = (long double)(q_elaspedtime.elapsed()) * 0.001f;
 
-        start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
-        curr_time = min_time + start_time;
+            start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+            curr_time = min_time + start_time;
 
-        // initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
-        // start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
-        // q_timer->start();
-        m_play = true;        
-        ui->playpushButton->setText("Stop");
+            // initial_time = float(q_elaspedtime.elapsed()) * 0.001f;
+            // start_time = (max_time - min_time)/100.0 * (long double)(ui->timeLineSlider->sliderPosition());
+            // q_timer->start();
+            m_play = true;        
+            ui->playpushButton->setText("Stop");
 
-    } else {
-        q_timer->stop();
-        m_play = false;
-        ui->playpushButton->setText("Play");
-
+        } else {
+            q_timer->stop();
+            m_play = false;
+            ui->playpushButton->setText("Play");
+        }
     }
 }

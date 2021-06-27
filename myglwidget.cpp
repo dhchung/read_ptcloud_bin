@@ -37,8 +37,8 @@ void MyGLWidget::initializeGL(){
     
 }
 void MyGLWidget::resizeGL(int w, int h){
-    width = w;
-    height = h;
+    gl_width = w;
+    gl_height = h;
     glViewport(0, 0, w, h);
 }
 void MyGLWidget::paintGL(){
@@ -49,7 +49,7 @@ void MyGLWidget::paintGL(){
     QMatrix4x4 model;
     QMatrix4x4 view;
     QMatrix4x4 projection;
-    projection.perspective(45.0f, width/height, 0.01f, 1000.0f);
+    projection.perspective(45.0f, float(gl_width/gl_height), 0.01f, 1000.0f);
 
     view = cam_pose.view;
 
@@ -139,6 +139,7 @@ void MyGLWidget::paintGL(){
 
 
 void MyGLWidget::paintstuff(){
+    
     paintGL();
     update();
 }

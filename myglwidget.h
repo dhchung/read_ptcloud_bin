@@ -99,6 +99,7 @@ public:
     ~MyGLWidget();
 
     void paintstuff();
+    void resizeGL(int w, int h) override;
 
     std::vector<std::vector<float>> lidar1_ptcld;
     std::vector<std::vector<float>> lidar2_ptcld;
@@ -116,7 +117,6 @@ public slots:
 
 protected:
     void initializeGL() override;
-    void resizeGL(int w, int h) override;
     void paintGL() override;
 
     void mousePressEvent(QMouseEvent *event) override;
@@ -137,8 +137,8 @@ private:
 
     unsigned int VBO, VAO, EBO, FBO;
 
-    int width;
-    int height;
+    int gl_width;
+    int gl_height;
     
     float roll;
     float pitch;
