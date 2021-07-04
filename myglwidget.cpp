@@ -49,7 +49,7 @@ void MyGLWidget::paintGL(){
     QMatrix4x4 model;
     QMatrix4x4 view;
     QMatrix4x4 projection;
-    projection.perspective(45.0f, float(gl_width/gl_height), 0.01f, 1000.0f);
+    projection.perspective(45.0f, float(gl_width)/float(gl_height), 0.01f, 1000.0f);
 
     view = cam_pose.view;
 

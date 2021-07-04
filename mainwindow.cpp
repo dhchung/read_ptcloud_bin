@@ -38,7 +38,11 @@ void MainWindow::LoadButtonClicked()
     dir = QFileDialog::getExistingDirectory(this, "Choose Directory", QDir::currentPath(), QFileDialog::ShowDirsOnly);
     ui->dirlabel->setText(dir);
     dir_path = dir.toUtf8().constData();
-    LoadTimeLine(dir_path);
+
+    std::cout<<dir_path<<std::endl;
+    if(dir_path!=""){
+        LoadTimeLine(dir_path);
+    }
 }
 
 std::vector<int> MainWindow::sort_indices(const std::vector<long double> &v) {
